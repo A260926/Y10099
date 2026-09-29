@@ -1,0 +1,65 @@
+itty-router contract mutation check
+baseline hash  src/Router.ts    723b7013225c
+baseline hash  src/IttyRouter.ts db56e617639b
+
+baseline: contract tests green
+
+M1  KILLED  [route compilation] stop collapsing repeated/trailing slashes when joining base + route
+        ✗ route-string compilation contract > IttyRouter > repeated slashes across base and route are collapsed
+        ✗ route-string compilation contract > IttyRouter > a trailing slash matches the same path without it
+        ✗ route-string compilation contract > Router (flow) > repeated slashes across base and route are collapsed [0.03ms]
+        ✗ route-string compilation contract > Router (flow) > a trailing slash matches the same path without it
+M2  KILLED  [route compilation] require the wildcard segment to be present (breaks absent wildcard match)
+        ✗ route-string compilation contract > IttyRouter > an absent optional wildcard matches the bare prefix
+        ✗ route-string compilation contract > Router (flow) > an absent optional wildcard matches the bare prefix [0.02ms]
+M3  KILLED  [route compilation] do not escape dots so "." matches any character
+        ✗ route-string compilation contract > IttyRouter > a dot in the route never matches a non-dot character [0.04ms]
+        ✗ route-string compilation contract > Router (flow) > a dot in the route never matches a non-dot character [0.01ms]
+M4  KILLED  [route compilation] make greedy params non-greedy so only one segment is captured
+        ✗ route-string compilation contract > IttyRouter > greedy params span multiple segments [0.02ms]
+        ✗ route-string compilation contract > Router (flow) > greedy params span multiple segments [0.02ms]
+M5  KILLED  [query parsing] reverse repeated-key concatenation order
+        ✗ query-string contract > IttyRouter > a repeated key changes from a single value to an array [0.20ms]
+        ✗ query-string contract > Router (flow) > a repeated key changes from a single value to an array [0.03ms]
+        ✗ one Request reused across two routers > IttyRouter: the second hit leaves no params, route or query residue [0.11ms]
+        ✗ one Request reused across two routers > Router (flow): the second hit leaves no params, route or query residue
+M6  KILLED  [query parsing] drop the null prototype on the parsed query object (prototype pollution)
+        ✗ query-string contract > IttyRouter > a "__proto__" key is an own property and never pollutes Object.prototype [0.14ms]
+        ✗ query-string contract > Router (flow) > a "__proto__" key is an own property and never pollutes Object.prototype [0.05ms]
+M7  KILLED  [query parsing] parse into a fresh object without reassigning request.query (stale keys survive)
+        ✗ query-string contract > IttyRouter > a repeated key changes from a single value to an array [0.18ms]
+        ✗ query-string contract > IttyRouter > an empty value is preserved
+        ✗ query-string contract > IttyRouter > an empty first occurrence is replaced (not concatenated) by the next value [0.03ms]
+        ✗ query-string contract > IttyRouter > a "__proto__" key is an own property and never pollutes Object.prototype
+        ✗ query-string contract > Router (flow) > a repeated key changes from a single value to an array
+        ✗ query-string contract > Router (flow) > an empty value is preserved [0.03ms]
+        ✗ query-string contract > Router (flow) > an empty first occurrence is replaced (not concatenated) by the next value [0.03ms]
+        ✗ query-string contract > Router (flow) > a "__proto__" key is an own property and never pollutes Object.prototype [0.03ms]
+        ✗ one Request reused across two routers > IttyRouter: the second hit leaves no params, route or query residue [0.14ms]
+        ✗ one Request reused across two routers > Router (flow): the second hit leaves no params, route or query residue [0.04ms]
+M8  KILLED  [control flow] treat only false (not empty string/0) as a response
+        ✗ route-string compilation contract > Router (flow) > the first registered matching route wins regardless of method type [0.14ms]
+        ✗ route-string compilation contract > Router (flow) > a specific method registered earlier wins over a later ALL route [0.02ms]
+        ✗ async control-flow contract (Router) > before short-circuits on an empty string and still runs finally [0.04ms]
+        ✗ async control-flow contract (Router) > before does NOT short-circuit on null/undefined (0 still stops) [0.04ms]
+        ✗ async control-flow contract (Router) > finally returning undefined keeps the existing response (even "") [0.04ms]
+M9  KILLED  [control flow] finally replaces the response even when a handler returns undefined
+        ✗ async control-flow contract (Router) > before short-circuits on an empty string and still runs finally [0.04ms]
+        ✗ async control-flow contract (Router) > catch sees the error, the request view and args; later stages are skipped [0.08ms]
+        ✗ async control-flow contract (Router) > finally returning undefined keeps the existing response (even "") [0.03ms]
+        ✗ async control-flow contract (Router) > a static request.proxy is what before, route, catch and finally receive [0.11ms]
+        ✗ async control-flow contract (Router) > a proxy attached mid-route is used by the next layer and by finally
+M10  KILLED  [control flow] always rethrow errors thrown from finally instead of routing them to catch
+        ✗ async control-flow contract (Router) > an error thrown inside finally is handled by catch [0.15ms]
+M11  KILLED  [request view] handlers always receive the raw request instead of request.proxy
+        ✗ async control-flow contract (Router) > catch sees the error, the request view and args; later stages are skipped [0.08ms]
+        ✗ async control-flow contract (Router) > an error thrown inside finally is handled by catch [0.12ms]
+        ✗ async control-flow contract (Router) > a static request.proxy is what before, route, catch and finally receive [0.07ms]
+        ✗ async control-flow contract (Router) > a proxy attached mid-route is used by the next layer and by finally
+M12  KILLED  [request view] keep stale params from a previous router hit instead of overwriting them
+        ✗ one Request reused across two routers > IttyRouter: the second hit leaves no params, route or query residue [0.18ms]
+        ✗ one Request reused across two routers > Router (flow): the second hit leaves no params, route or query residue
+
+summary: 12/12 mutations killed across 4 categories
+categories: route compilation | query parsing | control flow | request view
+source restored: yes (contract tests green again)
