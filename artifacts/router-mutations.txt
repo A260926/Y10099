@@ -1,0 +1,64 @@
+itty-router contract mutation run
+generated: 2026-09-29T18:25:53.621Z
+suite:     test/router-contract.test.ts
+==============================================================================
+KILLED  M1-slash-collapse          [route compilation] 1 failing / 0 passing | restored=true
+          why it should break: duplicate slashes between base and route leak into the regex
+KILLED  M2-dot-escape              [route compilation] 2 failing / 35 passing | restored=true
+          why it should break: a dot in a route matches any character (/dataXjson matches /data.json)
+          red: router contract: route-string compilation > Router > treats dots literally (no wildcard dot) [0.93ms]
+          red: router contract: route-string compilation > Router > captures named params and splits name from extension [0.01ms]
+          red: router contract: route-string compilation > Router > treats dots literally (no wildcard dot) [0.93ms]
+          red: router contract: route-string compilation > Router > captures named params and splits name from extension [0.01ms]
+KILLED  M3-greedy-separator        [route compilation] 1 failing / 36 passing | restored=true
+          why it should break: named params swallow slashes and match empty segments
+          red: router contract: route-string compilation > Router > captures named params and splits name from extension [0.05ms]
+          red: router contract: route-string compilation > Router > captures named params and splits name from extension [0.05ms]
+KILLED  M4-wildcard-required       [route compilation] 1 failing / 36 passing | restored=true
+          why it should break: the wildcard tail becomes mandatory (/assets no longer matches /assets/*)
+          red: router contract: route-string compilation > Router > wildcard is optional: matches with and without the tail [0.10ms]
+          red: router contract: route-string compilation > Router > wildcard is optional: matches with and without the tail [0.10ms]
+KILLED  M5-query-no-array          [query parsing] 2 failing / 35 passing | restored=true
+          why it should break: repeated query keys stay a single (last) value instead of an array
+          red: router contract: query parsing > a repeated key graduates from a single value to an array in encounter order [1.39ms]
+          red: router contract: one Request passed to two routers > rebuilds query for the second router instead of reusing the first object [0.04ms]
+          red: router contract: query parsing > a repeated key graduates from a single value to an array in encounter order [1.39ms]
+          red: router contract: one Request passed to two routers > rebuilds query for the second router instead of reusing the first object [0.04ms]
+KILLED  M6-query-null-proto        [query parsing] 1 failing / 36 passing | restored=true
+          why it should break: __proto__ / built-in query keys can touch the real prototype chain
+          red: router contract: query parsing > a __proto__ query key does not pollute Object.prototype [0.05ms]
+          red: router contract: query parsing > a __proto__ query key does not pollute Object.prototype [0.05ms]
+KILLED  M7-before-falsy-shortcircuit [async control flow] 4 failing / 33 passing | restored=true
+          why it should break: a before handler returning the empty string (or 0) stops the flow incorrectly
+          red: router contract: async control-flow ordering > before returning false short-circuits; finally still runs; null/undefined fall through [0.33ms]
+          red: router contract: async control-flow ordering > every layer receives request.proxy when present, in exact order [0.06ms]
+          red: router contract: async control-flow ordering > a proxy installed inside before is used from the route stage onward
+          red: router contract: async control-flow ordering > without request.proxy every layer receives the original request
+KILLED  M8-route-undefined-continue [async control flow] 6 failing / 31 passing | restored=true
+          why it should break: inverted guard: undefined stops the flow while false/0 continue to the next handler
+          red: router contract: route-string compilation > Router > ALL and method-specific routes are checked in registration order [0.04ms]
+          red: router contract: async control-flow ordering > a route handler returning undefined lets later handlers continue, false stops [0.03ms]
+          red: router contract: async control-flow ordering > a false response skips the remaining handlers of the same route
+          red: router contract: async control-flow ordering > a zero response skips the remaining handlers of the same route
+KILLED  M9-finally-undefined-keeps [async control flow] 1 failing / 36 passing | restored=true
+          why it should break: a finally handler returning 0 is treated as "no replacement"
+          red: router contract: async control-flow ordering > finally can replace the response, and returning undefined keeps it [0.22ms]
+          red: router contract: async control-flow ordering > finally can replace the response, and returning undefined keeps it [0.22ms]
+KILLED  M10-method-order           [method ordering] 1 failing / 36 passing | restored=true
+          why it should break: ALL routes never match, breaking registration-order precedence
+          red: router contract: route-string compilation > IttyRouter > ALL and method-specific routes are checked in registration order [0.09ms]
+          red: router contract: route-string compilation > IttyRouter > ALL and method-specific routes are checked in registration order [0.09ms]
+KILLED  M11-proxy-propagation      [request proxy] 2 failing / 35 passing | restored=true
+          why it should break: handlers receive the raw request instead of request.proxy
+          red: router contract: async control-flow ordering > every layer receives request.proxy when present, in exact order [1.11ms]
+          red: router contract: async control-flow ordering > a proxy installed inside before is used from the route stage onward [0.27ms]
+          red: router contract: async control-flow ordering > every layer receives request.proxy when present, in exact order [1.11ms]
+          red: router contract: async control-flow ordering > a proxy installed inside before is used from the route stage onward [0.27ms]
+==============================================================================
+mutations killed:   11/11
+mutations survived: 0
+categories killed:  5 (async control flow, method ordering, query parsing, request proxy, route compilation)
+source restored:    true
+baseline rerun:     GREEN (37 passing, 0 failing)
+==============================================================================
+RESULT: ALL MUTATIONS KILLED - suite is mutation-safe
